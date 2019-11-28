@@ -22,11 +22,38 @@ function katyzmaIndex() {
             }
             currentDate = nextDay(currentDate);
         }
+    } else if (startViewDate.getTime() < startingDate.getTime()) {
+        var currentDate = startingDate;
+        while(currentDate.getTime() >= startViewDate.getTime()) {
+            if (isPsaltyrDay(currentDate)) {
+                katyzma=(katyzma-1) % 20;
+                if (katyzma < 0) {
+                    katyzma = 20 + katyzma;
+                }
+            }
+            currentDate = addDays(currentDate, -1);
+        }
     }
     return katyzma;
 }
 
+function back() {
+    startViewDate = addDays(startViewDate, -15);
+    show();
+}
+
+function forth() {
+    startViewDate = addDays(startViewDate, 15);
+    show();
+}
+
 function init() {
+    show();
+    document.getElementById('back').onclick = back;
+    document.getElementById('forth').onclick = forth;
+}
+
+function show() {
     const table = document.getElementById('table');
     var content = '<tr><td>Особа</td>';
     const endViewDate = addDays(startViewDate, 30);
@@ -44,7 +71,12 @@ function init() {
         while (currentDate.getTime() <= endViewDate.getTime()) {
             if (isPsaltyrDay(currentDate)) {
                 katyzma=(katyzma+1) % 20;
-                content += '<td>' + (katyzma+1) + '</td>';
+                if (katyzma == people[person].my-1) {
+                    content += "<td bgcolor='yellow'>";
+                } else {
+                    content += '<td>';
+                }
+                content += (katyzma+1) + '</td>';
             } else {
                 content += '<td>x</td>'
             }
