@@ -31,7 +31,7 @@ function isPsaltyrDay(currentDate) {
     currentDate.getDay() == 5;
 }
 
-function katyzmaIndex() {
+function katyzmaIndex(startViewDate) {
     var katyzma = 0;
     if (startViewDate.getTime() > startingDate.getTime()) {
         var currentDate = nextDay(startingDate);
@@ -72,37 +72,58 @@ function init() {
     document.getElementById('forth').onclick = forth;
 }
 
-function show() {
-    const table = document.getElementById('table');
-    var content = '<tr><td>Особа</td>';
+function getCalendarTable(startViewDate) {
+    var content = [];
+    var row = ['Особа']
     const endViewDate = addDays(startViewDate, 30);
     var currentDate = startViewDate;
     while (currentDate.getTime() <= endViewDate.getTime()) {
-        content += '<td>' + formatDate(currentDate) + '</td>';
+        row.push(formatDate(currentDate));
         currentDate = nextDay(currentDate);
     }
-    content += '</tr>';
-    cachedKatyzmaIndex = katyzmaIndex();
+    content.push(row);
+
+    const cachedKatyzmaIndex = katyzmaIndex(startViewDate);
     for (person in people) {
-        content += '<tr><td>' + person + "</td>";
+        row = [person];
         var currentDate = startViewDate;
         var katyzma = (cachedKatyzmaIndex + people[person].index-1) % 20;
         while (currentDate.getTime() <= endViewDate.getTime()) {
             if (isPsaltyrDay(currentDate)) {
-                katyzma=(katyzma+1) % 20;
-                if (katyzma == people[person].my-1) {
-                    content += "<td bgcolor='yellow'>";
-                } else {
-                    content += '<td>';
+                if (currentDate.getTime() != startViewDate.getTime()) {
+                    katyzma=(katyzma+1) % 20;
                 }
-                content += (katyzma+1) + '</td>';
+                if (katyzma == people[person].my-1) {
+                    row.push('' + (katyzma+1) + '*');
+                } else {
+                    row.push('' + (katyzma+1));
+                }
             } else {
-                content += '<td>x</td>'
+                row.push('x');
             }
             currentDate = nextDay(currentDate);
         }
-        content += '</tr>';
+        content.push(row);
     }
+    return content;
+}
+
+function show() {
+    const table = document.getElementById('table');
+    const data = getCalendarTable(startViewDate);
+    content = '';
+    data.forEach(row => {
+        content += '<tr>';
+        row.forEach(cell => {
+            if (cell.indexOf('*') >= 0) {
+                content += '<td bgcolor="yellow">';
+            } else {
+                content += '<td>';    
+            }
+            content += cell + "</td>";
+        });
+        content += '</tr>';
+    });
     table.innerHTML = content;
 }
 
