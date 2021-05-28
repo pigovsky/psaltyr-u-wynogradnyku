@@ -15,7 +15,7 @@ const people = {
     "Міненко Наталія": {'index': 10, 'my': 19},
     "Гордійчук Оксана": {'index': 11, 'my': 1},
     "Плитус Ганна": {'index': 12, 'my': 3},
-    "Кукурудз Оксана": {'index': 13, 'my': 5},
+    "Комарин Вікторія": {'index': 13, 'my': 5},
     "Пенцко Надія": {'index': 14, 'my': 7},
     "Попович Галинка": {'index': 15, 'my': 9},
     "Підвишенна Тетяна": {'index': 16, 'my': 11},
@@ -57,12 +57,12 @@ function katyzmaIndex(startViewDate) {
 }
 
 function back() {
-    startViewDate = addDays(startViewDate, -15);
+    startViewDate = addDays(startViewDate, -1);
     show();
 }
 
 function forth() {
-    startViewDate = addDays(startViewDate, 15);
+    startViewDate = addDays(startViewDate, 1);
     show();
 }
 
