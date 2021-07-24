@@ -1,40 +1,14 @@
-const Churches = [
-    {
-        "lat": 50.46139554755741, 
-        "lng": 30.382982790470127,
-        "name": `
-<h1>УГКЦ Святого Йосафата</h1>
-
-<h2>Розклад Богослужень</h2>
-
-<h3>Понеділок-четвер</h3>
-<ul>
-    <li>8:00 Божественна літургія за здоров'я</li>
-</ul>
-
-<h3>П'ятниця</h3> 
-<ul>
-    <li>8:00 Божественна літургія за здоров'я</li>
-    <li>18:30 Молитви на оздоровлення</li>
-</ul>
-
-<h3>Субота</h3>
-<ul>
-    <li>9:00 Божественна літургія за упокій</li>
-    <li>10:00 Панахида</li>
-    <li>10:30 1/3 - Lectio Divina, 2/4 - Матері в молитві</li>
-    <li>18:00 Всеношня (Вечірня та Утреня)</li>
-</ul>
-
-<h3>Неділя</h3>
-<ul>
-    <li>9:00 Божественна літургія за здоров'я</li>
-    <li>11:00 Божественна літургія для дітей</li>
-</ul>
-`
-    }
-];
-
+function split(str, separator, limit) {
+if (limit==0) return [str];
+var a = str.split(separator, limit);
+if(a.length == limit) {
+let s = a.join(separator) + separator;
+a.push( str.substr(s.length) );
+return a;
+}else{
+return [str];
+}
+}
 
 function init() {
     // initialize Leaflet
@@ -53,9 +27,24 @@ function init() {
     // show the scale bar on the lower left corner
     L.control.scale().addTo(map);
 
-    // show a marker on the map
-    for(church of Churches) {
-        L.marker([church.lat, church.lng]).bindPopup(church.name).addTo(map);
+    function onDataLoaded() {
+        const items = this.responseText.split("<hr>");
+        // show a marker on the map
+        for(item of items) {
+            const latLngAndDescription = split(item, "\n", 1);
+            if (latLngAndDescription.length == 2) { 
+                const latLng = latLngAndDescription[0].split(',');
+                if (latLng.length == 2) {
+                    const description = latLngAndDescription[1];
+                    L.marker(latLng).bindPopup(description).addTo(map);
+                }
+           }
+        }
     }
+
+    const oReq = new XMLHttpRequest();
+    oReq.addEventListener("load", onDataLoaded);
+    oReq.open("GET", "churches/Kyiv/churches.html");
+    oReq.send();
 }
 
