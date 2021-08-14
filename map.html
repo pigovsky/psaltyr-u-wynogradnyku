@@ -9,7 +9,8 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
         integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
         crossorigin=""></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="geo-data/objects.js"></script>
     <script src="js/map.js"></script>
     <style>
       html, body {
@@ -25,6 +26,11 @@
     </style>
   </head>
   <body onload='init()'>
+    <select id="geo-data" v-on:change="selected">
+      <option :value="link" v-for="(link, name) in objects">
+        {{name}}
+      </option>
+    </select>
     <div id="map"></div>
   </body>
 </html>
