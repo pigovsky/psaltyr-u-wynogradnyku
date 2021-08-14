@@ -30,6 +30,8 @@ function init() {
     function onDataLoaded() {
         const items = this.responseText.split("<hr>");
         // show a marker on the map
+        var avgLat = null;
+        var avgLng = null;
         for(item of items) {
             const latLngAndDescription = split(item, "\n", 1);
             if (latLngAndDescription.length == 2) { 
@@ -37,14 +39,43 @@ function init() {
                 if (latLng.length == 2) {
                     const description = latLngAndDescription[1];
                     L.marker(latLng).bindPopup(description).addTo(map);
+                    if (avgLat == null) {
+                        avgLat = latLng[0];
+                    } else {
+                        avgLat = (avgLat + latLng[0]) / 2;
+                    }
+                    if (avgLng == null) {
+                        avgLng = latLng[1];
+                    } else {
+                        avgLng = (avgLng + latLng[1]) / 2;
+                    }
                 }
            }
         }
+        map.setView([avgLat, avgLng], 20)
     }
 
-    const oReq = new XMLHttpRequest();
-    oReq.addEventListener("load", onDataLoaded);
-    oReq.open("GET", "churches/Kyiv/churches.html");
-    oReq.send();
-}
+    function openGeoObjects(link) {
+        const path = `geo-data/${link}`;
+        console.log(`openGeoObjects, path = ${path}`);
+        const oReq = new XMLHttpRequest();
+        oReq.addEventListener("load", onDataLoaded);
+        oReq.open("GET", path);
+        oReq.send();
+    }
 
+    openGeoObjects(OBJECTS["Церкви Києва"]);
+
+    new Vue({
+        "el": '#geo-data',
+        "data": {
+            "objects": OBJECTS
+        },
+        "methods": {
+            "selected": function(event) {
+                var link = event.srcElement.value;
+                openGeoObjects(link);
+            }
+        }
+    });
+}
