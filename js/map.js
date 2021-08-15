@@ -35,9 +35,11 @@ function init() {
         for(item of items) {
             const latLngAndDescription = split(item, "\n", 1);
             if (latLngAndDescription.length == 2) { 
-                const latLng = latLngAndDescription[0].split(',');
+                const latLng = latLngAndDescription[0].split(',')
+                    .map(v => parseFloat(v));
                 if (latLng.length == 2) {
-                    const description = latLngAndDescription[1];
+                    const description = `${latLngAndDescription[1]}
+                        <a href='https://www.google.com/maps/place/${latLng[0]},${latLng[1]}'>дорога</a>`;
                     L.marker(latLng).bindPopup(description).addTo(map);
                     if (avgLat == null) {
                         avgLat = latLng[0];
